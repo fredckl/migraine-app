@@ -32,17 +32,6 @@ const COMMON_SYMPTOMS = [
   'Vomissements',
 ];
 
-const COMMON_TRIGGERS = [
-  'Stress',
-  'Manque de sommeil',
-  'Déshydratation',
-  'Alcool',
-  'Caféine',
-  'Changement météo',
-  'Écrans',
-  'Activité physique',
-];
-
 const formatDateTimeForInput = (date) => {
   const d = new Date(date);
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
@@ -55,7 +44,6 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
     end_time: '',
     intensity: 2,
     symptoms: [],
-    triggers: [],
     medication: '',
     notes: '',
   });
@@ -64,8 +52,8 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
     e.preventDefault();
     const data = {
       ...formData,
-      start_time: new Date(formData.start_time).toISOString(),
-      end_time: formData.end_time ? new Date(formData.end_time).toISOString() : null,
+      start_time: formData.start_time.replace('T', ' '),
+      end_time: formData.end_time ? formData.end_time.replace('T', ' ') : null,
     };
     
     try {
@@ -82,15 +70,6 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
       symptoms: prev.symptoms.includes(symptom)
         ? prev.symptoms.filter(s => s !== symptom)
         : [...prev.symptoms, symptom]
-    }));
-  };
-
-  const handleTriggerToggle = (trigger) => {
-    setFormData(prev => ({
-      ...prev,
-      triggers: prev.triggers.includes(trigger)
-        ? prev.triggers.filter(t => t !== trigger)
-        : [...prev.triggers, trigger]
     }));
   };
 
@@ -147,21 +126,6 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
                   onClick={() => handleSymptomToggle(symptom)}
                   color={formData.symptoms.includes(symptom) ? 'primary' : 'default'}
                   variant={formData.symptoms.includes(symptom) ? 'filled' : 'outlined'}
-                />
-              ))}
-            </Box>
-          </Grid>
-
-          <Grid item xs={12}>
-            <InputLabel sx={{ mb: 1 }}>Déclencheurs potentiels</InputLabel>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-              {COMMON_TRIGGERS.map((trigger) => (
-                <Chip
-                  key={trigger}
-                  label={trigger}
-                  onClick={() => handleTriggerToggle(trigger)}
-                  color={formData.triggers.includes(trigger) ? 'primary' : 'default'}
-                  variant={formData.triggers.includes(trigger) ? 'filled' : 'outlined'}
                 />
               ))}
             </Box>

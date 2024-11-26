@@ -42,14 +42,22 @@ class FoodCategory(db.Model):
 
 class Migraine(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=True)
-    intensity = db.Column(db.Integer, nullable=False)  # 1-10
-    symptoms = db.Column(db.String(500), nullable=True)
-    triggers = db.Column(db.String(500), nullable=True)
-    medication = db.Column(db.String(200), nullable=True)
-    notes = db.Column(db.String(500), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime)
+    intensity = db.Column(db.Integer, nullable=False)
+    symptoms = db.Column(db.JSON)
+    notes = db.Column(db.Text)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat() if self.end_time else None,
+            'intensity': self.intensity,
+            'symptoms': self.symptoms,
+            'notes': self.notes
+        }
 
 class FoodEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -269,39 +277,27 @@ def get_entries(current_user):
 @app.route('/add_migraine', methods=['POST'])
 @token_required
 def add_migraine(current_user):
-    data = request.json
-    symptoms_json = json.dumps(data.get('symptoms', [])) if data.get('symptoms') else None
-    triggers_json = json.dumps(data.get('triggers', [])) if data.get('triggers') else None
+    data = request.get_json()
+    
     migraine = Migraine(
-        start_time=parse_datetime(data['start_time']),
-        end_time=parse_datetime(data['end_time']) if data.get('end_time') else None,
+        user_id=current_user.id,
+        start_time=datetime.fromisoformat(data['start_time']),
+        end_time=datetime.fromisoformat(data['end_time']) if data.get('end_time') else None,
         intensity=data['intensity'],
-        symptoms=symptoms_json,
-        triggers=triggers_json,
-        medication=data.get('medication'),
-        notes=data.get('notes'),
-        user_id=current_user.id
+        symptoms=data.get('symptoms', []),
+        notes=data.get('notes')
     )
     
     db.session.add(migraine)
     db.session.commit()
     
-    return jsonify({'status': 'success', 'migraine_id': migraine.id})
+    return jsonify({'status': 'success', 'data': migraine.to_dict()})
 
 @app.route('/get_migraines', methods=['GET'])
 @token_required
 def get_migraines(current_user):
     migraines = Migraine.query.filter_by(user_id=current_user.id).order_by(Migraine.start_time.desc()).all()
-    return jsonify([{
-        'id': m.id,
-        'start_time': m.start_time.isoformat() + 'Z',
-        'end_time': m.end_time.isoformat() + 'Z' if m.end_time else None,
-        'intensity': m.intensity,
-        'symptoms': json.loads(m.symptoms) if m.symptoms else [],
-        'triggers': json.loads(m.triggers) if m.triggers else [],
-        'medication': m.medication,
-        'notes': m.notes
-    } for m in migraines])
+    return jsonify([m.to_dict() for m in migraines])
 
 @app.route('/get_categories', methods=['GET'])
 def get_categories():

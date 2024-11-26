@@ -52,7 +52,7 @@ function AppContent() {
     <>
       {user && <Navbar />}
       <Box sx={{ 
-        display: 'flex', 
+        display: 'flex',
         flexDirection: 'column', 
         minHeight: '100vh',
         bgcolor: 'background.default'

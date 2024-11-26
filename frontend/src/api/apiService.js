@@ -28,21 +28,11 @@ api.interceptors.response.use(
 );
 
 export const register = async (userData) => {
-  try {
-    const response = await api.post('/api/register', userData);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  return await api.post('/api/register', userData);
 };
 
 export const login = async (credentials) => {
-  try {
-    const response = await api.post('/api/login', credentials);
-    return response;
-  } catch (error) {
-    throw error;
-  }
+  return await api.post('/api/login', credentials);
 };
 
 export const getUserProfile = () => api.get('/api/me');

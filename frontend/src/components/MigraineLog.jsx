@@ -1,23 +1,21 @@
-import { useState, useEffect } from 'react';
 import {
-  Container,
-  Paper,
-  Typography,
+  Box,
   Button,
-  Dialog,
-  Grid,
   Card,
   CardContent,
-  Chip,
-  LinearProgress,
-  Box,
+  Dialog,
   IconButton,
+  Paper,
+  Typography,
+  Chip,
+  LinearProgress
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddMigraineForm from './forms/AddMigraineForm';
-import { getMigraines, deleteMigraine } from '../api/apiService';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useEffect, useState } from 'react';
+import { getMigraines, deleteMigraine } from '../api/apiService';
+import AddMigraineForm from './forms/AddMigraineForm';
 
 const MigraineLog = () => {
   const [migraines, setMigraines] = useState([]);
@@ -36,9 +34,9 @@ const MigraineLog = () => {
     loadMigraines();
   }, []);
 
-  const handleAddSuccess = () => {
+  const handleAddMigraine = async () => {
     setOpenDialog(false);
-    loadMigraines();
+    await loadMigraines();
   };
 
   const handleDeleteMigraine = async (migraineId) => {
@@ -53,123 +51,83 @@ const MigraineLog = () => {
   };
 
   const getIntensityColor = (intensity) => {
-    if (intensity >= 7) return 'error';
-    if (intensity >= 4) return 'warning';
+    if (intensity >= 8) return 'error';
+    if (intensity >= 5) return 'warning';
     return 'success';
   };
 
   return (
-    <Container maxWidth="lg">
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h5">Journal des Migraines</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setOpenDialog(true)}
-            >
-              Ajouter une migraine
-            </Button>
-          </Paper>
-        </Grid>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+        <Typography variant="h4">Journal des migraines</Typography>
+        <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
+          Ajouter une migraine
+        </Button>
+      </Box>
 
-        {migraines.map((migraine) => (
-          <Grid item xs={12} key={migraine.id}>
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <Box>
-                    <Typography variant="h6" gutterBottom>
-                      {format(new Date(migraine.start_time), 'PPP à HH:mm', { locale: fr })}
-                    </Typography>
-                    
-                    <div style={{ marginTop: '16px' }}>
-                      <Typography variant="body2" gutterBottom>
-                        Intensité: {migraine.intensity}/10
-                      </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={migraine.intensity * 10}
-                        color={getIntensityColor(migraine.intensity)}
-                        sx={{ height: 10, borderRadius: 5 }}
-                      />
-                    </div>
-
-                    {migraine.end_time && (
-                      <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                        Durée: {format(new Date(migraine.end_time), 'HH:mm', { locale: fr })}
-                      </Typography>
-                    )}
-
-                    {migraine.symptoms && (
-                      <div style={{ marginTop: '16px' }}>
-                        <Typography variant="subtitle2">Symptômes:</Typography>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                          {migraine.symptoms.map((symptom, index) => (
-                            <Chip
-                              key={index}
-                              label={symptom.trim()}
-                              size="small"
-                              variant="outlined"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {migraine.triggers && (
-                      <div style={{ marginTop: '16px' }}>
-                        <Typography variant="subtitle2">Déclencheurs potentiels:</Typography>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                          {migraine.triggers.map((trigger, index) => (
-                            <Chip
-                              key={index}
-                              label={trigger.trim()}
-                              size="small"
-                              color="error"
-                              variant="outlined"
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {migraine.medication && (
-                      <Typography variant="body2" sx={{ mt: 2 }}>
-                        Médicaments: {migraine.medication}
-                      </Typography>
-                    )}
-
-                    {migraine.notes && (
-                      <Typography variant="body2" sx={{ mt: 2 }}>
-                        Notes: {migraine.notes}
-                      </Typography>
-                    )}
-                  </Box>
-                  <IconButton 
-                    onClick={() => handleDeleteMigraine(migraine.id)}
-                    color="error"
-                    aria-label="supprimer"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+      {migraines.map((migraine) => (
+        <Card key={migraine.id} sx={{ mb: 2 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="h6">
+                  {format(new Date(migraine.start_time), 'PPPP', { locale: fr })}
+                </Typography>
+                <Box sx={{ mt: 2, mb: 1 }}>
+                  <Typography variant="body2" gutterBottom>
+                    Intensité: {migraine.intensity}/10
+                  </Typography>
+                  <LinearProgress
+                    variant="determinate"
+                    value={migraine.intensity * 10}
+                    color={getIntensityColor(migraine.intensity)}
+                    sx={{ height: 8, borderRadius: 4 }}
+                  />
                 </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+                {migraine.end_time && (
+                  <Typography color="textSecondary" variant="body2">
+                    Durée: {format(new Date(migraine.start_time), 'HH:mm')} - {format(new Date(migraine.end_time), 'HH:mm')}
+                  </Typography>
+                )}
+                {migraine.symptoms && migraine.symptoms.length > 0 && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Symptômes:
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {migraine.symptoms.map((symptom, index) => (
+                        <Chip
+                          key={index}
+                          label={symptom}
+                          size="small"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+                {migraine.notes && (
+                  <Typography sx={{ mt: 2 }} color="textSecondary">
+                    Notes: {migraine.notes}
+                  </Typography>
+                )}
+              </Box>
+              <IconButton
+                onClick={() => handleDeleteMigraine(migraine.id)}
+                color="error"
+                aria-label="supprimer"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </CardContent>
+        </Card>
+      ))}
 
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        <AddMigraineForm onSuccess={handleAddSuccess} onCancel={() => setOpenDialog(false)} />
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <AddMigraineForm onSuccess={handleAddMigraine} onCancel={() => setOpenDialog(false)} />
       </Dialog>
-    </Container>
+    </Box>
   );
 };
 
