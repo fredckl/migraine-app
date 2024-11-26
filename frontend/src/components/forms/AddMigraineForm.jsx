@@ -12,8 +12,12 @@ import {
   MenuItem,
   Chip,
   Box,
+  InputAdornment
 } from '@mui/material';
 import { addMigraine } from '../../api/apiService';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { format, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const INTENSITY_LEVELS = [
   { value: 1, label: 'Légère' },
@@ -36,6 +40,11 @@ const formatDateTimeForInput = (date) => {
   const d = new Date(date);
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 16);
+};
+
+const formatDateTimeForDisplay = (dateStr) => {
+  if (!dateStr) return '';
+  return format(parseISO(dateStr), 'dd MMMM yyyy HH:mm', { locale: fr });
 };
 
 const AddMigraineForm = ({ onSuccess, onCancel }) => {
@@ -86,6 +95,14 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
               value={formData.start_time}
               onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
               InputLabelProps={{ shrink: true }}
+              helperText={formData.start_time ? formatDateTimeForDisplay(formData.start_time) : ''}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CalendarTodayIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -96,6 +113,14 @@ const AddMigraineForm = ({ onSuccess, onCancel }) => {
               value={formData.end_time}
               onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
               InputLabelProps={{ shrink: true }}
+              helperText={formData.end_time ? formatDateTimeForDisplay(formData.end_time) : ''}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CalendarTodayIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
 

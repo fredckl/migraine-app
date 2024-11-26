@@ -12,13 +12,24 @@ import {
   Box,
   Chip,
   Grid,
+  Autocomplete,
+  InputAdornment,
+  Typography,
 } from '@mui/material';
 import { addFoodEntry, getCategories } from '../../api/apiService';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import { format, parseISO } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const formatDateTimeForInput = (date) => {
   const d = new Date(date);
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 16);
+};
+
+const formatDateTimeForDisplay = (dateStr) => {
+  if (!dateStr) return '';
+  return format(parseISO(dateStr), 'dd MMMM yyyy HH:mm', { locale: fr });
 };
 
 // eslint-disable-next-line react/prop-types
@@ -108,6 +119,14 @@ const AddFoodEntryForm = ({ onSuccess, onCancel }) => {
               value={formData.datetime}
               onChange={(e) => setFormData({ ...formData, datetime: e.target.value })}
               InputLabelProps={{ shrink: true }}
+              helperText={formData.datetime ? formatDateTimeForDisplay(formData.datetime) : ''}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CalendarTodayIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
