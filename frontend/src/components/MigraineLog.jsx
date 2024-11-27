@@ -1,20 +1,19 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
   Button,
   Card,
   CardContent,
+  Chip,
   Dialog,
   IconButton,
-  Paper,
-  Typography,
-  Chip,
-  LinearProgress
+  LinearProgress,
+  Typography
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
-import { getMigraines, deleteMigraine } from '../api/apiService';
+import { deleteMigraine, getMigraines } from '../api/apiService';
 import AddMigraineForm from './forms/AddMigraineForm';
 
 const MigraineLog = () => {

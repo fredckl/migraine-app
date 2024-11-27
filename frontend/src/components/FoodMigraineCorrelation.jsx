@@ -305,7 +305,7 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
           <Grid item xs={12} sm={4}>
             <Box sx={{ width: '100%' }}>
               <Typography gutterBottom>
-                Nombre minimum d'occurrences
+                ${`Nombre minimum d'occurrences`}
               </Typography>
               <Slider
                 value={minOccurrences}
@@ -336,7 +336,7 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
           
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth>
-              <InputLabel>Nombre d'aliments</InputLabel>
+              <InputLabel>${`Nombre d'aliments`}</InputLabel>
               <Select
                 value={numItems}
                 label="Nombre d'aliments"

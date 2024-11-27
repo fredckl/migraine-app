@@ -1,25 +1,24 @@
-import { useState, useEffect } from 'react';
-import {
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Box,
-  Chip,
-  Grid,
-  Autocomplete,
-  InputAdornment,
-  Typography,
-} from '@mui/material';
-import { addFoodEntry, getCategories } from '../../api/apiService';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import {
+  Box,
+  Button,
+  Chip,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Grid,
+
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField
+} from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useEffect, useState } from 'react';
+import { addFoodEntry, getCategories } from '../../api/apiService';
 
 const formatDateTimeForInput = (date) => {
   const d = new Date(date);
