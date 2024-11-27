@@ -12,6 +12,7 @@ import { fr } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
 import { getFoodEntries, getMigraines } from '../api/apiService';
 import FoodMigraineCorrelation from './FoodMigraineCorrelation';
+import MigraineMonthlyChart from './MigraineMonthlyChart';
 
 const Dashboard = () => {
   const [recentMigraines, setRecentMigraines] = useState([]);
@@ -22,6 +23,7 @@ const Dashboard = () => {
     commonSymptoms: [],
   });
   const [foodEntries, setFoodEntries] = useState([]);
+  const [allMigraines, setAllMigraines] = useState([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -35,6 +37,7 @@ const Dashboard = () => {
         const entries = entriesRes.data;
 
         setFoodEntries(entries);
+        setAllMigraines(migraines);
 
         // Calcul des statistiques
         const lastMonth = subDays(new Date(), 30);
@@ -99,6 +102,10 @@ const Dashboard = () => {
           <Typography variant="h4" gutterBottom>
             Tableau de bord
           </Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <MigraineMonthlyChart migraines={allMigraines} />
         </Grid>
 
         {/* Statistiques générales */}

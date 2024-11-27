@@ -97,7 +97,6 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
 
   useEffect(() => {
     if (!migraines?.length || !foodEntries?.length) {
-      console.log('Pas de données à analyser:', { migraines, foodEntries });
       return;
     }
 
@@ -120,11 +119,6 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
       });
     }
 
-    console.log('Analyse des données:', { 
-      nbMigraines: filteredMigraines.length, 
-      nbFoodEntries: filteredFoodEntries.length 
-    });
-
     // Fonction pour trouver les repas dans les 24h avant une migraine
     const findFoodsBefore = (migraineTime) => {
       const migraineDate = parseISO(migraineTime);
@@ -143,14 +137,12 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
     // Initialiser le compteur pour tous les aliments
     filteredFoodEntries.forEach(entry => {
       if (!entry.food_items) {
-        console.warn('Entry sans food_items:', entry);
         return;
       }
       
       entry.food_items.forEach(item => {
         const foodName = item.category?.name || item.name;
         if (!foodName) {
-          console.warn('Item sans nom:', item);
           return;
         }
         
@@ -161,12 +153,9 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
       });
     });
 
-    console.log('Total des aliments:', totalFoodCount);
-
     // Compter les aliments avant les migraines
     filteredMigraines.forEach(migraine => {
       const relatedFoods = findFoodsBefore(migraine.start_time);
-      console.log('Aliments trouvés avant la migraine du', migraine.start_time, ':', relatedFoods.length);
       
       relatedFoods.forEach(entry => {
         if (!entry.food_items) return;
@@ -182,8 +171,6 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
         });
       });
     });
-
-    console.log('Aliments avant migraines:', foodCount);
 
     // Calculer le pourcentage de corrélation
     const correlations = Object.entries(foodCount).map(([food, count]) => {
@@ -305,7 +292,7 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
           <Grid item xs={12} sm={4}>
             <Box sx={{ width: '100%' }}>
               <Typography gutterBottom>
-                ${`Nombre minimum d'occurrences`}
+                {`Nombre minimum d'occurrences`}
               </Typography>
               <Slider
                 value={minOccurrences}
@@ -336,7 +323,7 @@ const FoodMigraineCorrelation = ({ migraines, foodEntries }) => {
           
           <Grid item xs={12} sm={4}>
             <FormControl fullWidth>
-              <InputLabel>${`Nombre d'aliments`}</InputLabel>
+              <InputLabel>{`Nombre d'aliments`}</InputLabel>
               <Select
                 value={numItems}
                 label="Nombre d'aliments"
